@@ -13,7 +13,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    /* Разрешаем emit для composite проекта */
     "noEmit": false,
     "emitDeclarationOnly": true,
     "declaration": true,
