@@ -2,6 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { StoreProvider } from './app/providers/storeProvider';
 import { ProductList } from '@/features/product-list';
 import { AddProductForm } from '@/features/add-product';
+import { EditProductForm } from '@/features/edit-product';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card/Card';
 import './App.css';
 
@@ -26,6 +27,15 @@ function App() {
               </CardHeader>
               <CardContent>
                 <AddProductForm />
+              </CardContent>
+            </Card>
+
+            <Card style={{ marginTop: '1.5rem' }}>
+              <CardHeader>
+                <CardTitle>Редактирование товара (ID: 1)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <EditProductForm productId="1" />
               </CardContent>
             </Card>
 
