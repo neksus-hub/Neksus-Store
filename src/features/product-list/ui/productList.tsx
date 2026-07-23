@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '@/entities/product/api/productApi';
+import { DeleteProductButton } from '@/features/delete-product/ui/DeleteProductButton';  // ← ИСПРАВЛЕНО
 import { Button } from '@/shared/ui/Button/Button';
 import { Card, CardContent } from '@/shared/ui/Card/Card';
-import { Pencil, Trash2, Search, Package, AlertCircle } from 'lucide-react';
+import { Pencil, Search, Package, AlertCircle } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import styles from './ProductList.module.css';
 
 interface ProductListProps {
     onEdit?: (id: string) => void;
-    onDelete?: (id: string) => void;
 }
 
-export function ProductList({ onEdit, onDelete }: ProductListProps) {
-    const { data: products = [], isLoading, error } = useGetProductsQuery();
+export function ProductList({ onEdit }: ProductListProps) {
+    const { data: products = [], isLoading, error, refetch } = useGetProductsQuery();
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 
@@ -29,10 +29,8 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
         }
     };
 
-    const handleDelete = (id: string) => {
-        if (onDelete) {
-            onDelete(id);
-        }
+    const handleDeleteSuccess = () => {
+        refetch();
     };
 
     if (isLoading) {
@@ -149,14 +147,11 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
                                                     <Pencil size={16} />
                                                     <span className="hidden sm:inline">Изменить</span>
                                                 </Button>
-                                                <Button
-                                                    size="sm"
-                                                    variant="destructive"
-                                                    onClick={() => handleDelete(product.id)}
-                                                >
-                                                    <Trash2 size={16} />
-                                                    <span className="hidden sm:inline">Удалить</span>
-                                                </Button>
+                                                <DeleteProductButton
+                                                    productId={product.id}
+                                                    productName={product.name}
+                                                    onSuccess={handleDeleteSuccess}
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -193,13 +188,12 @@ export function ProductList({ onEdit, onDelete }: ProductListProps) {
                                                 >
                                                     <Pencil size={16} />
                                                 </Button>
-                                                <Button
+                                                <DeleteProductButton
+                                                    productId={product.id}
+                                                    productName={product.name}
+                                                    onSuccess={handleDeleteSuccess}
                                                     size="sm"
-                                                    variant="destructive"
-                                                    onClick={() => handleDelete(product.id)}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </Button>
+                                                />
                                             </div>
                                         </div>
                                     </div>

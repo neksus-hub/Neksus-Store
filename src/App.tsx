@@ -7,12 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card/Card'
 import './App.css';
 
 function App() {
-  const handleDelete = (id: string) => {
-    if (window.confirm(`Удалить товар ${id}?`)) {
-      console.log('Удаление товара:', id);
-    }
-  };
-
   return (
     <StoreProvider>
       <BrowserRouter>
@@ -44,7 +38,7 @@ function App() {
                 <CardTitle>Список товаров</CardTitle>
               </CardHeader>
               <CardContent>
-                <ProductList onDelete={handleDelete} />
+                <ProductList />
               </CardContent>
             </Card>
           </div>
