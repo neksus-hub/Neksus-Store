@@ -1,0 +1,115 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    font-family: inherit;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+/* ===== Variants ===== */
+.default {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.default:hover {
+    background: #1d4ed8;
+}
+
+.destructive {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+}
+
+.destructive:hover {
+    background: #dc2626;
+}
+
+.outline {
+    background: transparent;
+    color: var(--foreground);
+    border-color: var(--border);
+}
+
+.outline:hover {
+    background: var(--secondary);
+}
+
+.secondary {
+    background: var(--secondary);
+    color: var(--secondary-foreground);
+}
+
+.secondary:hover {
+    background: #e2e8f0;
+}
+
+.ghost {
+    background: transparent;
+    color: var(--foreground);
+    border-color: transparent;
+}
+
+.ghost:hover {
+    background: var(--secondary);
+}
+
+.link {
+    background: transparent;
+    color: var(--primary);
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.link:hover {
+    text-decoration: none;
+}
+
+/* ===== Sizes ===== */
+.size-default {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 2.5rem;
+}
+
+.size-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+    min-height: 2.25rem;
+}
+
+.size-lg {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    min-height: 2.75rem;
+}
+
+.size-icon {
+    padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-height: auto;
+    min-width: auto;
+}

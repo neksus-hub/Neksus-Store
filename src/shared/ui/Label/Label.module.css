@@ -1,0 +1,32 @@
+.label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--foreground);
+    margin-bottom: 0.25rem;
+    font-family: inherit;
+}
+
+.label.required::after {
+    content: ' *';
+    color: var(--destructive);
+}
+
+.label.error {
+    color: var(--destructive);
+}
+
+.label.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Размеры */
+.size-sm {
+    font-size: 0.75rem;
+}
+
+.size-lg {
+    font-size: 1rem;
+}
