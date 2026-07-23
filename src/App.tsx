@@ -1,15 +1,11 @@
 import { BrowserRouter } from 'react-router-dom';
 import { StoreProvider } from './app/providers/storeProvider';
 import { ProductList } from '@/features/product-list';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
-import { ImageUpload } from '@/features/image-upload';
+import { AddProductForm } from '@/features/add-product';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card/Card';
 import './App.css';
 
 function App() {
-  const handleImageUpload = (url: string) => {
-    console.log('Изображение загружено:', url);
-  };
-
   const handleDelete = (id: string) => {
     if (window.confirm(`Удалить товар ${id}?`)) {
       console.log('Удаление товара:', id);
@@ -26,10 +22,10 @@ function App() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Тест загрузки изображений</CardTitle>
+                <CardTitle>Создание товара</CardTitle>
               </CardHeader>
               <CardContent>
-                <ImageUpload onImageUploaded={handleImageUpload} />
+                <AddProductForm />
               </CardContent>
             </Card>
 
