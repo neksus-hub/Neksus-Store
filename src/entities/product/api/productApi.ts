@@ -35,7 +35,6 @@ export const productApi = createApi({
         // GET /api/products/:id
         getProductById: builder.query<Product, string>({
             query: (id) => `/api/products/${id}`,
-            // ✅ ИСПРАВЛЕНО: _result, _error
             providesTags: (_result, _error, id) => [{ type: 'Product', id }],
         }),
 
@@ -56,7 +55,7 @@ export const productApi = createApi({
                 method: 'PUT',
                 body: data,
             }),
-            // ✅ ИСПРАВЛЕНО: _result, _error
+
             invalidatesTags: (_result, _error, { id }) => [
                 { type: 'Product', id },
                 { type: 'Product', id: 'LIST' },

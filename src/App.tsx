@@ -20,7 +20,7 @@ function ProductsTest() {
           </li>
         ))}
       </ul>
-      <p className="text-muted">✅ Redux работает! (но MSW ещё не настроен)</p>
+      <p className="text-muted">Redux работает! (но MSW ещё не настроен)</p>
     </div>
   );
 }
