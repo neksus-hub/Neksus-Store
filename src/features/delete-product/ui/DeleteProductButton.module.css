@@ -1,0 +1,99 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal {
+    background: var(--background);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    max-width: 28rem;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.2s ease;
+}
+
+.modalIcon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--destructive);
+    margin: 0 auto 1rem;
+}
+
+.modalTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.modalDescription {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.modalActions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.modalActions .cancelButton {
+    min-width: 100px;
+}
+
+.modalActions .deleteButton {
+    min-width: 100px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal {
+        padding: 1rem;
+        width: 95%;
+    }
+
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .modalActions .cancelButton,
+    .modalActions .deleteButton {
+        width: 100%;
+    }
+}
