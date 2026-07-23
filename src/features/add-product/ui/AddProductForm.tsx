@@ -56,12 +56,6 @@ export function AddProductForm() {
                 <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                     {/* Заголовок */}
                     <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold">Создание товара</h2>
-                            <p className="text-muted text-sm mt-1">
-                                Заполните все поля для добавления нового товара
-                            </p>
-                        </div>
                         <Button
                             type="button"
                             variant="outline"
