@@ -17,6 +17,5 @@ export type {
     DeleteProductResponse
 } from './product/model/types';
 
-
 export { productSchema } from './product/model/schema';
 export type { ProductFormData } from './product/model/schema';
