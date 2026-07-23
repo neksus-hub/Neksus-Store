@@ -25,7 +25,7 @@ let products: Product[] = [
         name: 'AirPods Pro 2',
         description: 'Наушники с активным шумоподавлением',
         price: 249.99,
-        imageUrl: 'https://images.unsplash.com/photo-1603351154351-5e2d0630f185?w=200',
+        imageUrl: 'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=200&h=200&fit=crop',
     },
 ];
 
@@ -34,6 +34,7 @@ let nextId = 4;
 export const handlers = [
     // GET /api/products
     http.get('/api/products', () => {
+        console.log(HttpResponse.json(products))
         return HttpResponse.json(products);
     }),
 

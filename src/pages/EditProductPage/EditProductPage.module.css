@@ -1,0 +1,10 @@
+.page {
+    min-height: 100vh;
+    background: var(--background);
+    padding: 2rem 1rem;
+}
+
+.container {
+    max-width: 80rem;
+    margin: 0 auto;
+}

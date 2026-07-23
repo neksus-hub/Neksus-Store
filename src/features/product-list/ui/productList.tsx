@@ -1,33 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '@/entities/product/api/productApi';
-import { DeleteProductButton } from '@/features/delete-product/ui/DeleteProductButton';  // ← ИСПРАВЛЕНО
+import { DeleteProductButton } from '@/features/delete-product/ui/DeleteProductButton';
 import { Button } from '@/shared/ui/Button/Button';
 import { Card, CardContent } from '@/shared/ui/Card/Card';
 import { Pencil, Search, Package, AlertCircle } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import styles from './ProductList.module.css';
 
-interface ProductListProps {
-    onEdit?: (id: string) => void;
-}
-
-export function ProductList({ onEdit }: ProductListProps) {
+export function ProductList() {
+    const navigate = useNavigate();
     const { data: products = [], isLoading, error, refetch } = useGetProductsQuery();
     const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate();
 
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    const handleEdit = (id: string) => {
-        if (onEdit) {
-            onEdit(id);
-        } else {
-            navigate(`/edit/${id}`);
-        }
-    };
 
     const handleDeleteSuccess = () => {
         refetch();
@@ -142,7 +130,7 @@ export function ProductList({ onEdit }: ProductListProps) {
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={() => handleEdit(product.id)}
+                                                    onClick={() => navigate(`/edit/${product.id}`)}
                                                 >
                                                     <Pencil size={16} />
                                                     <span className="hidden sm:inline">Изменить</span>
@@ -184,7 +172,7 @@ export function ProductList({ onEdit }: ProductListProps) {
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={() => handleEdit(product.id)}
+                                                    onClick={() => navigate(`/edit/${product.id}`)}
                                                 >
                                                     <Pencil size={16} />
                                                 </Button>
