@@ -5,3 +5,6 @@ export { useAppDispatch, useAppSelector } from './store/hooks';
 
 // ===== Providers Экспорты =====
 export { StoreProvider } from './providers/storeProvider';
+
+// ===== Mocks Экспорты =====
+export { worker, handlers } from './mocks';
