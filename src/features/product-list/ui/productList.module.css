@@ -1,0 +1,386 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ===== Search ===== */
+.searchWrapper {
+    position: relative;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.625rem 2.5rem 0.625rem 2.5rem;
+    border: 1px solid var(--input);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    background: var(--background);
+    color: var(--foreground);
+    transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.searchInput::placeholder {
+    color: var(--muted-foreground);
+}
+
+.clearButton {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.clearButton:hover {
+    color: var(--foreground);
+    background: var(--muted);
+}
+
+/* ===== Stats ===== */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.statsCount {
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.statsEmpty {
+    color: var(--destructive);
+}
+
+/* ===== Loading ===== */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    gap: 1rem;
+}
+
+.loadingSpinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 3px solid var(--muted);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loadingText {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+}
+
+/* ===== Error ===== */
+.errorCard {
+    padding: 2rem;
+    border: 1px solid var(--destructive);
+    border-radius: var(--radius-lg);
+    background: rgba(239, 68, 68, 0.05);
+    text-align: center;
+}
+
+.errorIcon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--destructive);
+    margin: 0 auto 1rem;
+}
+
+.errorTitle {
+    font-weight: 500;
+    color: var(--destructive);
+    margin-bottom: 0.25rem;
+}
+
+.errorSubtext {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+/* ===== Empty ===== */
+.emptyCard {
+    padding: 4rem 2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--background);
+    text-align: center;
+}
+
+.emptyIcon {
+    width: 4rem;
+    height: 4rem;
+    color: var(--muted-foreground);
+    margin: 0 auto 1rem;
+}
+
+.emptyTitle {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.emptySubtext {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+/* ===== Table ===== */
+.tableWrapper {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--background);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableHeader {
+    background: var(--muted);
+    border-bottom: 1px solid var(--border);
+}
+
+.tableHeader th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+}
+
+.tableRow {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+}
+
+.tableRow:hover {
+    background: rgba(241, 245, 249, 0.3);
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.tableCell {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+.imageCell {
+    width: 4rem;
+}
+
+.imageWrapper {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.productName {
+    font-weight: 500;
+}
+
+.productDescription {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+    max-width: 20rem;
+}
+
+.productPrice {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===== Mobile Grid ===== */
+.mobileGrid {
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.mobileCard {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: background 0.15s ease;
+}
+
+.mobileCard:hover {
+    background: rgba(241, 245, 249, 0.3);
+}
+
+.mobileContent {
+    display: flex;
+    gap: 1rem;
+}
+
+.mobileImage {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--muted);
+    flex-shrink: 0;
+}
+
+.mobileImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mobileInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.mobileName {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.mobileDescription {
+    font-size: 0.8125rem;
+    color: var(--muted-foreground);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+    margin-top: 0.125rem;
+}
+
+.mobileFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+}
+
+.mobilePrice {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.mobileActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ===== Animations ===== */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tableRow {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .tableWrapper {
+        display: none;
+    }
+
+    .mobileGrid {
+        display: flex;
+    }
+
+    .imageCell {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobileImage {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .mobileName {
+        font-size: 0.8125rem;
+    }
+
+    .mobilePrice {
+        font-size: 0.875rem;
+    }
+}
