@@ -19,13 +19,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
     },
-    "ignoreDeprecations": "6.0"
+    "types": [
+      "node",
+      "vite/client"
+    ]
   },
   "include": [
     "src"
