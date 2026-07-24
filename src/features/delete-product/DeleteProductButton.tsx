@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDeleteProductMutation } from '@/entities';
 import { Button } from '@/shared/ui/Button/Button';
-import { Trash2, AlertTriangle } from 'lucide-react';  // ← УДАЛЁН X
+import { Trash2, AlertTriangle } from 'lucide-react';
 import styles from './DeleteProductButton.module.css';
 
 interface DeleteProductButtonProps {

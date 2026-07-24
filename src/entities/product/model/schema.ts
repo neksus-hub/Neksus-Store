@@ -31,7 +31,6 @@ export const productSchema = z.object({
             message: 'Цена обязательна для заполнения',
         }),
 
-    // ✅ ИСПРАВЛЕНО: imageUrl теперь строка, которая может быть пустой
     imageUrl: z
         .string()
         .optional()

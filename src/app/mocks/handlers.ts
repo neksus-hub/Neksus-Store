@@ -1,13 +1,12 @@
 import { http, HttpResponse } from 'msw';
 import { Product } from '@/entities';
 
-// ✅ Функция для создания SVG-заглушек (как fallback)
+// Функция для создания SVG-заглушек
 const createPlaceholderSVG = (text: string, bgColor = '#f1f5f9', textColor = '#64748b') => {
     const displayText = text.length > 20 ? text.slice(0, 17) + '...' : text;
     return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='${encodeURIComponent(bgColor)}'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='${displayText.length > 10 ? 16 : 20}' font-weight='500' fill='${encodeURIComponent(textColor)}' text-anchor='middle' dy='.3em'%3E${encodeURIComponent(displayText)}%3C/text%3E%3C/svg%3E`;
 };
 
-// ✅ Локальные изображения из public/images/products/
 const LOCAL_IMAGES = {
     iphone: '/images/products/iphone.jpg',
     macbook: '/images/products/macbook.jpg',
@@ -20,21 +19,21 @@ let products: Product[] = [
         name: 'iPhone 15 Pro',
         description: 'Смартфон с титановым корпусом и динамическим островком',
         price: 999.99,
-        imageUrl: LOCAL_IMAGES.iphone, // ✅ Реальное изображение
+        imageUrl: LOCAL_IMAGES.iphone,
     },
     {
         id: '2',
         name: 'MacBook Pro 16"',
         description: 'Ноутбук с чипом M3 Pro для профессиональной работы',
         price: 2499.99,
-        imageUrl: LOCAL_IMAGES.macbook, // ✅ Реальное изображение
+        imageUrl: LOCAL_IMAGES.macbook,
     },
     {
         id: '3',
         name: 'AirPods Pro 2',
         description: 'Наушники с активным шумоподавлением',
         price: 249.99,
-        imageUrl: LOCAL_IMAGES.airpods, // ✅ Реальное изображение
+        imageUrl: LOCAL_IMAGES.airpods,
     },
 ];
 
