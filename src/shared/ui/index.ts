@@ -20,3 +20,4 @@ export {
     CardFooter,
 } from './Card/Card';
 export type { CardProps } from './Card/Card';
+export { Image } from './Image/Image';

@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Схема валидации товара с помощью Zod
- */
 export const productSchema = z.object({
     name: z
         .string()
@@ -18,21 +15,27 @@ export const productSchema = z.object({
         .number({
             invalid_type_error: 'Цена должна быть числом',
         })
-        .min(0.01, 'Цена должна быть больше 0')
+        .min(0, 'Цена не может быть отрицательной')
         .max(999999.99, 'Цена не должна превышать 999999.99')
+        .refine(
+            (val) => {
+                const str = val.toString();
+                const decimalPart = str.split('.')[1];
+                return !decimalPart || decimalPart.length <= 2;
+            },
+            {
+                message: 'Цена должна содержать не более 2 знаков после запятой',
+            }
+        )
         .refine((val) => val !== undefined && val !== null, {
             message: 'Цена обязательна для заполнения',
         }),
 
+    // ✅ ИСПРАВЛЕНО: imageUrl теперь строка, которая может быть пустой
     imageUrl: z
         .string()
-        .url('Введите корректный URL изображения')
         .optional()
-        .or(z.literal('')),
+        .default(''),
 });
 
-/**
- * Тип данных формы на основе схемы
- * Используется в React Hook Form
- */
 export type ProductFormData = z.infer<typeof productSchema>;

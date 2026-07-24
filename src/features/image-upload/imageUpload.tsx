@@ -1,5 +1,5 @@
-import { useState, useRef, ChangeEvent, DragEvent } from 'react';
-import { useUploadImageMutation } from '@/entities/product/api/productApi';  // ← ИСПРАВЛЕНО
+import { useState, useRef, ChangeEvent, DragEvent, useEffect } from 'react';
+import { useUploadImageMutation } from '@/entities/product/api/productApi';
 import { ImagePlus, X, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import styles from './ImageUpload.module.css';
@@ -17,6 +17,11 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
     const [isDragging, setIsDragging] = useState(false);
     const [uploadImage] = useUploadImageMutation();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [currentFile, setCurrentFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        setPreview(initialImage || null);
+    }, [initialImage]);
 
     const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -27,15 +32,14 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
     const processFile = async (file: File) => {
         setError(null);
         setIsUploading(true);
+        setCurrentFile(file);
 
-        // Валидация размера
         if (file.size > 5 * 1024 * 1024) {
             setError('Файл слишком большой. Максимальный размер: 5MB');
             setIsUploading(false);
             return;
         }
 
-        // Валидация формата
         const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
             setError('Неверный формат. Используйте JPEG, PNG или WebP');
@@ -43,22 +47,26 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
             return;
         }
 
-        // Предпросмотр
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+        const objectUrl = URL.createObjectURL(file);
+        setPreview(objectUrl);
 
-        // Загрузка на сервер
         try {
             const formData = new FormData();
             formData.append('image', file);
             const result = await uploadImage(formData).unwrap();
-            onImageUploaded(result.imageUrl);
+            const finalUrl = result.imageUrl || objectUrl;
+            onImageUploaded(finalUrl);
+            if (result.imageUrl && result.imageUrl !== objectUrl) {
+                setPreview(result.imageUrl);
+            }
+            setError(null);
         } catch (err) {
-            setError('Ошибка загрузки изображения. Попробуйте ещё раз');
-            setPreview(null);
+            if (objectUrl) {
+                onImageUploaded(objectUrl);
+                setError('Изображение сохранено локально (сервер недоступен)');
+            } else {
+                setError('Ошибка загрузки изображения. Попробуйте ещё раз');
+            }
         } finally {
             setIsUploading(false);
         }
@@ -67,6 +75,7 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
     const handleRemove = () => {
         setPreview(null);
         setError(null);
+        setCurrentFile(null);
         onImageUploaded('');
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -111,7 +120,11 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
                     <>
                         <div className={styles.previewContainer}>
                             <div className={styles.previewWrapper}>
-                                <img src={preview} alt="Preview" className={styles.previewImage} />
+                                <img
+                                    src={preview}
+                                    alt="Предпросмотр изображения"
+                                    className={styles.previewImage}
+                                />
                             </div>
                             <button
                                 onClick={(e) => {
@@ -120,15 +133,22 @@ export function ImageUpload({ onImageUploaded, initialImage, className }: ImageU
                                 }}
                                 className={styles.removeButton}
                                 type="button"
+                                aria-label="Удалить изображение"
                             >
                                 <X size={16} />
                             </button>
                         </div>
-                        {isUploading && (
+                        {isUploading ? (
                             <div className={styles.uploadingStatus}>
                                 <Loader2 className="animate-spin" size={16} />
                                 Загрузка...
                             </div>
+                        ) : (
+                            currentFile && (
+                                <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>
+                                    {currentFile.name} ({Math.round(currentFile.size / 1024)} KB)
+                                </div>
+                            )
                         )}
                     </>
                 ) : (

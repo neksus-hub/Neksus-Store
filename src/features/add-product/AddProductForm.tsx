@@ -1,29 +1,19 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import {
-    productSchema,
-    type ProductFormData,
-    useGetProductByIdQuery,
-    useUpdateProductMutation
-} from '@/entities';
+import { productSchema, type ProductFormData, useCreateProductMutation } from '@/entities';
 import { Button } from '@/shared/ui/Button/Button';
 import { Input } from '@/shared/ui/Input/Input';
 import { Label } from '@/shared/ui/Label/Label';
 import { Card, CardContent } from '@/shared/ui/Card/Card';
 import { ImageUpload } from '@/features/image-upload';
-import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import styles from './EditProductForm.module.css';
+import styles from './AddProductForm.module.css';
 
-interface EditProductFormProps {
-    productId: string;
-}
-
-export function EditProductForm({ productId }: EditProductFormProps) {
+export function AddProductForm() {
     const navigate = useNavigate();
-    const { data: product, isLoading: isLoadingProduct, error: productError } = useGetProductByIdQuery(productId);
-    const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
+    const [createProduct, { isLoading }] = useCreateProductMutation();
 
     const {
         register,
@@ -33,14 +23,12 @@ export function EditProductForm({ productId }: EditProductFormProps) {
         formState: { errors, isDirty, isValid },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
-        values: product
-            ? {
-                name: product.name,
-                description: product.description,
-                price: product.price,
-                imageUrl: product.imageUrl || '',
-            }
-            : undefined,
+        defaultValues: {
+            name: '',
+            description: '',
+            price: 0,
+            imageUrl: '',
+        },
         mode: 'onChange',
     });
 
@@ -49,58 +37,23 @@ export function EditProductForm({ productId }: EditProductFormProps) {
     const onSubmit = async (data: ProductFormData) => {
         try {
             const productData = {
-                name: data.name,
-                description: data.description,
-                price: data.price,
+                name: data.name.trim(),
+                description: data.description.trim(),
+                price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
                 imageUrl: data.imageUrl || '',
             };
-            await updateProduct({ id: productId, data: productData }).unwrap();
+            await createProduct(productData).unwrap();
             navigate('/');
         } catch (error) {
-            console.error('Failed to update product:', error);
+            console.error('Failed to create product:', error);
         }
     };
-
-    // Состояние загрузки
-    if (isLoadingProduct) {
-        return (
-            <Card>
-                <CardContent className={styles.loadingContainer}>
-                    <div className={styles.loadingSpinner} />
-                    <p className={styles.loadingText}>Загрузка товара...</p>
-                </CardContent>
-            </Card>
-        );
-    }
-
-    // Состояние ошибки
-    if (productError || !product) {
-        return (
-            <Card variant="destructive">
-                <CardContent className={styles.errorContainer}>
-                    <AlertCircle className={styles.errorIcon} />
-                    <p className={styles.errorTitle}>Товар не найден</p>
-                    <p className={styles.errorSubtext}>Пожалуйста, проверьте ID товара</p>
-                    <Button onClick={() => navigate('/')} style={{ marginTop: '1rem' }}>
-                        Вернуться к списку
-                    </Button>
-                </CardContent>
-            </Card>
-        );
-    }
 
     return (
         <Card className="max-w-2xl mx-auto">
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-                    {/* Заголовок */}
                     <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold">Редактирование товара</h2>
-                            <p className="text-muted text-sm mt-1">
-                                Измените данные товара
-                            </p>
-                        </div>
                         <Button
                             type="button"
                             variant="outline"
@@ -111,7 +64,6 @@ export function EditProductForm({ productId }: EditProductFormProps) {
                         </Button>
                     </div>
 
-                    {/* Поля формы */}
                     <div className={styles.fieldGroup}>
                         <Label className={styles.fieldLabel} required>
                             Название товара
@@ -160,16 +112,36 @@ export function EditProductForm({ productId }: EditProductFormProps) {
                                 $
                             </span>
                             <Input
-                                type="number"
-                                step="0.01"
-                                min="0.01"
-                                {...register('price', { valueAsNumber: true })}
+                                type="text"
+                                {...register('price', {
+                                    valueAsNumber: true,
+                                    setValueAs: (v) => {
+                                        if (!v || v === '') return 0;
+                                        let normalized = v.replace(',', '.');
+                                        normalized = normalized.replace(/[^0-9.]/g, '');
+                                        const num = parseFloat(normalized);
+                                        if (isNaN(num) || num < 0) return 0;
+                                        return Math.round(num * 100) / 100;
+                                    }
+                                })}
                                 placeholder="0.00"
                                 error={!!errors.price}
                                 className={cn(
                                     'pl-8',
                                     errors.price && styles.error
                                 )}
+                                onBlur={(e) => {
+                                    let value = e.target.value;
+                                    if (value) {
+                                        const normalized = value.replace(',', '.');
+                                        const num = parseFloat(normalized);
+                                        if (!isNaN(num) && num >= 0) {
+                                            const rounded = Math.round(num * 100) / 100;
+                                            e.target.value = rounded.toString();
+                                            setValue('price', rounded, { shouldValidate: true });
+                                        }
+                                    }
+                                }}
                             />
                         </div>
                         {errors.price && (
@@ -197,20 +169,19 @@ export function EditProductForm({ productId }: EditProductFormProps) {
                         </p>
                     </div>
 
-                    {/* Кнопки */}
                     <div className={styles.actions}>
                         <Button
                             type="submit"
-                            disabled={isUpdating || !isDirty || !isValid}
+                            disabled={isLoading || !isDirty || !isValid}
                             className={styles.submitButton}
                         >
-                            {isUpdating ? (
+                            {isLoading ? (
                                 <>
                                     <Loader2 size={16} className="animate-spin" />
-                                    Сохранение...
+                                    Создание...
                                 </>
                             ) : (
-                                'Сохранить изменения'
+                                'Создать товар'
                             )}
                         </Button>
                         <Button
