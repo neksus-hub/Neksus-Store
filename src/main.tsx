@@ -9,8 +9,14 @@ async function enableMocking() {
   }
 
   const { worker } = await import('./app/mocks/browser');
+
+  // Настройка worker с правильными опциями
   return worker.start({
     onUnhandledRequest: 'bypass',
+    // Для CORS
+    serviceWorker: {
+      url: '/mockServiceWorker.js',
+    },
   });
 }
 

@@ -1,26 +1,39 @@
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
-import { productSchema, type ProductFormData, useCreateProductMutation } from '@/entities';
+import {
+    productSchema,
+    type ProductFormData,
+    useGetProductByIdQuery,
+    useUpdateProductMutation
+} from '@/entities';
 import { Button } from '@/shared/ui/Button/Button';
 import { Input } from '@/shared/ui/Input/Input';
 import { Label } from '@/shared/ui/Label/Label';
 import { Card, CardContent } from '@/shared/ui/Card/Card';
 import { ImageUpload } from '@/features/image-upload';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
-import styles from './AddProductForm.module.css';
+import styles from './EditProductForm.module.css';
 
-export function AddProductForm() {
+interface EditProductFormProps {
+    productId: string;
+}
+
+export function EditProductForm({ productId }: EditProductFormProps) {
     const navigate = useNavigate();
-    const [createProduct, { isLoading }] = useCreateProductMutation();
+    const { data: product, isLoading: isLoadingProduct, error: productError } = useGetProductByIdQuery(productId);
+    const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
 
     const {
         register,
         handleSubmit,
         setValue,
         watch,
-        formState: { errors, isDirty, isValid },
+        reset,
+        trigger,
+        formState: { errors, isValid },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: {
@@ -33,29 +46,98 @@ export function AddProductForm() {
     });
 
     const imageUrl = watch('imageUrl');
+    const name = watch('name');
+    const description = watch('description');
+    const price = watch('price');
+
+    const [hasChanges, setHasChanges] = useState(false);
+    const [initialValues, setInitialValues] = useState<ProductFormData | null>(null);
+
+    useEffect(() => {
+        if (product) {
+            const values = {
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                imageUrl: product.imageUrl || '',
+            };
+            reset(values);
+            setInitialValues(values);
+            setHasChanges(false);
+            setTimeout(() => trigger(), 100);
+        }
+    }, [product, reset, trigger]);
+
+    useEffect(() => {
+        if (initialValues) {
+            const isChanged =
+                name !== initialValues.name ||
+                description !== initialValues.description ||
+                price !== initialValues.price ||
+                imageUrl !== initialValues.imageUrl;
+
+            setHasChanges(isChanged);
+
+            if (isChanged) {
+                trigger();
+            }
+        }
+    }, [name, description, price, imageUrl, initialValues, trigger]);
 
     const onSubmit = async (data: ProductFormData) => {
         try {
-            // Приводим данные к правильному типу
             const productData = {
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                imageUrl: data.imageUrl || '',  // ← Если undefined, используем пустую строку
+                name: data.name.trim(),
+                description: data.description.trim(),
+                price: typeof data.price === 'string' ? parseFloat(data.price) : data.price,
+                imageUrl: data.imageUrl || '',
             };
-            await createProduct(productData).unwrap();
+            await updateProduct({ id: productId, data: productData }).unwrap();
             navigate('/');
         } catch (error) {
-            console.error('Failed to create product:', error);
+            console.error('Failed to update product:', error);
         }
     };
+
+    if (isLoadingProduct) {
+        return (
+            <Card>
+                <CardContent className={styles.loadingContainer}>
+                    <div className={styles.loadingSpinner} />
+                    <p className={styles.loadingText}>Загрузка товара...</p>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    if (productError || !product) {
+        return (
+            <Card variant="destructive">
+                <CardContent className={styles.errorContainer}>
+                    <AlertCircle className={styles.errorIcon} />
+                    <p className={styles.errorTitle}>Товар не найден</p>
+                    <p className={styles.errorSubtext}>Пожалуйста, проверьте ID товара</p>
+                    <Button onClick={() => navigate('/')} style={{ marginTop: '1rem' }}>
+                        Вернуться к списку
+                    </Button>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    const isButtonDisabled = isUpdating || !hasChanges || !isValid;
 
     return (
         <Card className="max-w-2xl mx-auto">
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-                    {/* Заголовок */}
                     <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-2xl font-bold">Редактирование товара</h2>
+                            <p className="text-muted text-sm mt-1">
+                                Измените данные товара
+                            </p>
+                        </div>
                         <Button
                             type="button"
                             variant="outline"
@@ -66,7 +148,6 @@ export function AddProductForm() {
                         </Button>
                     </div>
 
-                    {/* Поля формы */}
                     <div className={styles.fieldGroup}>
                         <Label className={styles.fieldLabel} required>
                             Название товара
@@ -115,16 +196,36 @@ export function AddProductForm() {
                                 $
                             </span>
                             <Input
-                                type="number"
-                                step="0.01"
-                                min="0.01"
-                                {...register('price', { valueAsNumber: true })}
+                                type="text"
+                                {...register('price', {
+                                    valueAsNumber: true,
+                                    setValueAs: (v) => {
+                                        if (!v || v === '') return 0;
+                                        let normalized = v.replace(',', '.');
+                                        normalized = normalized.replace(/[^0-9.]/g, '');
+                                        const num = parseFloat(normalized);
+                                        if (isNaN(num) || num < 0) return 0;
+                                        return Math.round(num * 100) / 100;
+                                    }
+                                })}
                                 placeholder="0.00"
                                 error={!!errors.price}
                                 className={cn(
                                     'pl-8',
                                     errors.price && styles.error
                                 )}
+                                onBlur={(e) => {
+                                    let value = e.target.value;
+                                    if (value) {
+                                        const normalized = value.replace(',', '.');
+                                        const num = parseFloat(normalized);
+                                        if (!isNaN(num) && num >= 0) {
+                                            const rounded = Math.round(num * 100) / 100;
+                                            e.target.value = rounded.toString();
+                                            setValue('price', rounded, { shouldValidate: true });
+                                        }
+                                    }
+                                }}
                             />
                         </div>
                         {errors.price && (
@@ -138,7 +239,9 @@ export function AddProductForm() {
                     <div className={styles.fieldGroup}>
                         <Label className={styles.fieldLabel}>Изображение</Label>
                         <ImageUpload
-                            onImageUploaded={(url) => setValue('imageUrl', url)}
+                            onImageUploaded={(url) => {
+                                setValue('imageUrl', url);
+                            }}
                             initialImage={imageUrl}
                         />
                         {errors.imageUrl && (
@@ -152,20 +255,19 @@ export function AddProductForm() {
                         </p>
                     </div>
 
-                    {/* Кнопки */}
                     <div className={styles.actions}>
                         <Button
                             type="submit"
-                            disabled={isLoading || !isDirty || !isValid}
+                            disabled={isButtonDisabled}
                             className={styles.submitButton}
                         >
-                            {isLoading ? (
+                            {isUpdating ? (
                                 <>
                                     <Loader2 size={16} className="animate-spin" />
-                                    Создание...
+                                    Сохранение...
                                 </>
                             ) : (
-                                'Создать товар'
+                                'Сохранить изменения'
                             )}
                         </Button>
                         <Button

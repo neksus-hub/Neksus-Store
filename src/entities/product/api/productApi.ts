@@ -77,7 +77,6 @@ export const productApi = createApi({
                 url: '/api/upload/image',
                 method: 'POST',
                 body: formData,
-                formData: true,
             }),
         }),
     }),

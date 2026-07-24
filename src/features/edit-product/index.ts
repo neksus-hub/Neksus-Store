@@ -1,1 +1,1 @@
-export { EditProductForm } from './ui/EditProductForm';
+export { EditProductForm } from './EditProductForm';

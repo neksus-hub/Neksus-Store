@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetProductsQuery } from '@/entities/product/api/productApi';
-import { DeleteProductButton } from '@/features/delete-product/ui/DeleteProductButton';
+import { DeleteProductButton } from '@/features/delete-product';
 import { Button } from '@/shared/ui/Button/Button';
 import { Card, CardContent } from '@/shared/ui/Card/Card';
 import { Pencil, Search, Package, AlertCircle } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import styles from './ProductList.module.css';
+
+// SVG-заглушка (если изображение не загрузилось)
+const FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f1f5f9'/%3E%3Ctext x='50%25' y='50%25' font-family='Arial, sans-serif' font-size='14' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
 
 export function ProductList() {
     const navigate = useNavigate();
@@ -106,12 +109,12 @@ export function ProductList() {
                                         <td className={cn(styles.tableCell, styles.imageCell)}>
                                             <div className={styles.imageWrapper}>
                                                 <img
-                                                    src={product.imageUrl || 'https://via.placeholder.com/56/cccccc/666666?text=No+Image'}
+                                                    src={product.imageUrl || FALLBACK_IMAGE}
                                                     alt={product.name}
                                                     className={styles.image}
                                                     onError={(e) => {
-                                                        (e.target as HTMLImageElement).src =
-                                                            'https://via.placeholder.com/56/cccccc/666666?text=No+Image';
+                                                        // При ошибке загрузки показываем универсальную заглушку
+                                                        (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
                                                     }}
                                                 />
                                             </div>
@@ -155,11 +158,10 @@ export function ProductList() {
                                 <div className={styles.mobileContent}>
                                     <div className={styles.mobileImage}>
                                         <img
-                                            src={product.imageUrl || 'https://via.placeholder.com/64/cccccc/666666?text=No+Image'}
+                                            src={product.imageUrl || FALLBACK_IMAGE}
                                             alt={product.name}
                                             onError={(e) => {
-                                                (e.target as HTMLImageElement).src =
-                                                    'https://via.placeholder.com/64/cccccc/666666?text=No+Image';
+                                                (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
                                             }}
                                         />
                                     </div>
